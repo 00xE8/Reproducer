@@ -37,6 +37,7 @@ scan_encoders:
 		dec     [encoders_count] 
 		jnz     scan_encoders 
        ; no encoder found 
+	   ; no encoder found
 		jmp     gdiplus_shutdown
 	 
 encoder_found: 
