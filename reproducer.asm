@@ -9,6 +9,20 @@ include 'win32ax.inc'
 section '.text' code writeable executable 
 start:
 
+mov esi,0x14 ;moving the virtual-key code into esi. This will be used as the trigger of our screenshot capture
+invoke Sleep,1
+invoke GetAsyncKeyState,esi ;Determines whether a key is up or down at the time the function is called, and whether the key was pressed after a previous call to GetAsyncKeyState.
+mov edi,eax ;Could have worked directly in eax but decided to work aside in edi to make sure we have clean register. 
+shr edi,16 ;Unfortunately we can't access the higher 16 bits of a 32 bit register(at least not in a direct manner) so we need to shift its contents (16 stands for 16 bits) to the right, from where it can be accessed via di.
+and di,0FFFFH; Remember that GetAsyncKeyState enables the most significant bit of the register if the key is preessed down. We AND it to see if its set to FFFF(1111 1111 1111 1111) or not. Could have used test, instead of and+cmp
+cmp di,0FFFFH
+jnz start ;go back to the begining to check if the key is pressed again.
+
+
+;jmp beginGDI
+
+beginGDI:
+
 	invoke	GdiplusStartup,token,input,NULL 
 		test	 eax,eax 
 		jnz	 exit 
